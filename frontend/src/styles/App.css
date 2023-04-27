@@ -1,0 +1,15 @@
+* {
+  font-family: "Popins", sans-serif;
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+html {
+  background-color: rgb(249,251,250);
+}
+.primary {
+  color: rgba(65, 68, 73, 1);
+  font-size: 30px;
+  font-weight: 600;
+  box-sizing: border-box;
+}
