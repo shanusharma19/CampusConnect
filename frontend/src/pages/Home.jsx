@@ -6,9 +6,10 @@ const Home = () => {
   const [Name, setName] = useState();
   
   const init = async () => {
-  const res = await fetch("http://localhost:3000/student/1").catch((err) => err);
-  const data = await res.json();
-  setName(data.name);
+  const res = await fetch("http://localhost:5000/").catch((err) => err);
+  const {data} = await res.json();
+  setName(data[0].name);
+  console.log(data[0])
   }
   
   useEffect(() => {
