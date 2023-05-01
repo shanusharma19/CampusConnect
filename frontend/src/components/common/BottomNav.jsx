@@ -1,4 +1,5 @@
 import * as React from "react";
+import { useEffect, useRef } from "react";
 import BottomNavigation from "@mui/material/BottomNavigation";
 import BottomNavigationAction from "@mui/material/BottomNavigationAction";
 import FolderIcon from "@mui/icons-material/Folder";
@@ -15,10 +16,28 @@ import {
 } from "react-router-dom";
 
 const BottomNav = () => {
+  const home = useRef();
+  const store = useRef();
+  const partner = useRef();
+  const hackathon = useRef();
   const [value, setValue] = React.useState("recents");
   const handleChange = (event, newValue) => {
     setValue(newValue);
   };
+
+  useEffect(() => {
+          if(window.location.pathname=='/')
+          home.current.click()
+
+          if(window.location.pathname=='/store')
+          store.current.click()
+
+          if(window.location.pathname=='/partner')
+          partner.current.click()
+
+          if(window.location.pathname=='/hackathon')
+          hackathon.current.click()
+  }, []);
 
   return (
     <>
@@ -38,7 +57,7 @@ const BottomNav = () => {
       >
         {/* <Link style={{ textDecoration: "none" }} to="/"> */}
         <BottomNavigationAction
-        
+          ref={home}
           component={Link}
           to="/"
           label="Home"
@@ -49,6 +68,7 @@ const BottomNav = () => {
 
         {/* <Link style={{ textDecoration: "none" }} to="/store"> */}
           <BottomNavigationAction
+            ref={store}
             component={Link}
             to="/store"
             label="Store"
@@ -59,6 +79,7 @@ const BottomNav = () => {
 
         {/* <Link style={{ textDecoration: "none" }} to="/partner"> */}
           <BottomNavigationAction
+            ref={partner}
             component={Link}
             to="/partner"
             label="Partner"
@@ -69,6 +90,7 @@ const BottomNav = () => {
 
         {/* <Link style={{ textDecoration: "none" }} to="/hackathon"> */}
           <BottomNavigationAction
+            ref={hackathon}
             component={Link}
             to="/hackathon"
             label="Hackathon"
