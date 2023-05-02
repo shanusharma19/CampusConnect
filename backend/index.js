@@ -1,13 +1,15 @@
 const express = require("express");
 const cors = require("cors");
 const mongoose = require("mongoose");
-const getUser = require("./User/UserControllers");
+const {signupUser, loginUser, authenticateUser, getUser} = require("./User/UserControllers");
 
 const app = express();
 app.use(cors());
 app.use(express.json());
 
-app.get("/", getUser);
+app.post("/signup", signupUser);
+app.post("/login", loginUser);
+app.get('/user',authenticateUser,getUser);
 
 mongoose
   .connect("mongodb://localhost:27017/CampusConnect")
