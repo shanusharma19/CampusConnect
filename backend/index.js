@@ -1,7 +1,17 @@
 const express = require("express");
 const cors = require("cors");
 const mongoose = require("mongoose");
-const {signupUser, loginUser, authenticateUser, getUser} = require("./User/UserControllers");
+const {
+  signupUser,
+  loginUser,
+  authenticateUser,
+  getUser,
+} = require("./User/UserControllers");
+const {
+  createItem,
+  getItems,
+  purchaseItem,
+} = require("./Item/ItemControllers");
 
 const app = express();
 app.use(cors());
@@ -9,7 +19,11 @@ app.use(express.json());
 
 app.post("/signup", signupUser);
 app.post("/login", loginUser);
-app.get('/user',authenticateUser,getUser);
+app.get("/user", authenticateUser, getUser);
+
+app.post("/createItem", createItem);
+app.post("/purchaseItem", purchaseItem);
+app.get("/getItems",getItems);
 
 mongoose
   .connect("mongodb://localhost:27017/CampusConnect")
