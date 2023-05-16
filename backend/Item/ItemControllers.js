@@ -1,12 +1,24 @@
 const Item = require("../Item/ItemSchema");
+const cloudinary = require("cloudinary").v2;
+
+const upload = async (file) => {
+  const result = await cloudinary.uploader.upload(file.tempFilePath,{
+    public_id: `${Date.now()}`,
+    resource_type: "auto",
+    folder: "items"
+  })
+  return result.url;
+}
 
 const createItem = async (req, res) => {
-  const { name, state, seller,buyer } = req.body;
+  const { name, description, seller } = req.body;
+  const file = req.files.img;
+  const image = await upload(file);
   const newItem = new Item({
     name,
-    state,
     seller,
-    buyer
+    image,
+    description
   });
 
   newItem

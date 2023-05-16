@@ -5,19 +5,39 @@ const schema = new mongoose.Schema({
     type: String,
     require: true,
   },
-  state: {
-    type: String,
-    require: true,
-  },
   seller: {
     type: mongoose.Types.ObjectId,
     required: true,
     ref: "User",
   },
+  image: {
+    type: String,
+    require: true,
+  },
+  description: {
+    type: String,
+    require: true,
+  },
   buyer: {
     type: mongoose.Types.ObjectId,
     required: false,
+    default: null,
     ref: "User",
+  },
+  sold: {
+    type: Boolean,
+    require: false,
+    default: false,
+  },
+  buyerConfirm: {
+    type: Boolean,
+    require: false,
+    default: false,
+  },
+  sellerConfirm: {
+    type: Boolean,
+    require: false,
+    default: false
   },
 });
 
