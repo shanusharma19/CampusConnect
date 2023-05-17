@@ -11,11 +11,21 @@ const schema = new mongoose.Schema({
     ref: "User",
   },
   image: {
-    type: String,
-    require: true,
+    url: {
+      type: String,
+      require: true,
+    },
+    public_id: {
+      type: String,
+      require: true,
+    },
   },
   description: {
     type: String,
+    require: true,
+  },
+  price: {
+    type: Number,
     require: true,
   },
   buyer: {
@@ -29,15 +39,10 @@ const schema = new mongoose.Schema({
     require: false,
     default: false,
   },
-  buyerConfirm: {
-    type: Boolean,
-    require: false,
-    default: false,
-  },
   sellerConfirm: {
     type: Boolean,
     require: false,
-    default: false
+    default: false,
   },
 });
 
