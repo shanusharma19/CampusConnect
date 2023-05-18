@@ -14,6 +14,30 @@ const schema = new mongoose.Schema(
       type: String,
       require: true,
     },
+    image: {
+      url: {
+        type: String,
+        require: true,
+      },
+      public_id: {
+        type: String,
+        require: true,
+      },
+    },
+    requests:[
+      {
+        type: mongoose.Types.ObjectId,
+        required: false,
+        ref: "User",
+      }
+    ],
+    partners:[
+      {
+        type: mongoose.Types.ObjectId,
+        required: false,
+        ref: "User",
+      }
+    ]
   },
 );
 

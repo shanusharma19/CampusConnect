@@ -1,7 +1,21 @@
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const User = require("../User/UserSchema");
+const cloudinary = require("cloudinary").v2;
 const secretKey = "My_SECRET_KEY";
+
+const uploadImage = async (file) => {
+  const result = await cloudinary.uploader.upload(file.tempFilePath, {
+    public_id: `${Date.now()}`,
+    resource_type: "auto",
+    folder: "profiles",
+  });
+  return result;
+};
+
+const deleteImage = async (image) => {
+  await cloudinary.uploader.destroy(image.public_id);
+};
 
 const decodeToken = (token) => {
   let id;
@@ -16,7 +30,7 @@ const decodeToken = (token) => {
 const generateToken = (id) => {
   const token = jwt.sign(
     {
-      id
+      id,
     },
     secretKey
   );
@@ -31,6 +45,8 @@ const verifyEmail = (email) => {
 
 const signupUser = async (req, res) => {
   const { name, email, password } = req.body;
+  const file = req.files.img;
+  const { public_id, url } = await uploadImage(file);
 
   if (!name || !email || !password) {
     res.status(400).json({
@@ -53,6 +69,12 @@ const signupUser = async (req, res) => {
     name,
     email,
     password: hashedPassword,
+    image: {
+      public_id,
+      url,
+    },
+    requests: [],
+    partners: [],
   });
 
   newUser
@@ -131,8 +153,8 @@ const authenticateUser = async (req, res, next) => {
     return;
   }
   token = token.slice(1, -1);
-  
-  const id = decodeToken(token)
+
+  const id = decodeToken(token);
   if (!id) {
     res.status(422).json({
       status: false,
@@ -140,9 +162,9 @@ const authenticateUser = async (req, res, next) => {
     });
     return;
   }
-  const {i} = id;
+  const { i } = id;
 
-  const user = await User.findOne( i );
+  const user = await User.findOne(i);
   if (!user) {
     res.status(422).json({
       status: false,
@@ -160,11 +182,51 @@ const getUser = async (req, res) => {
     status: true,
     data: user,
   });
-}
+};
+
+const changeProfile = async (req, res) => {
+  try {
+    const { id } = req.body;
+    const file = req.files.img;
+
+    const { public_id, url } = await uploadImage(file);
+    let i = {
+      public_id,
+      url,
+    };
+    const user = await User.findOneAndUpdate(
+      { _id: id },
+      {
+        image: i,
+      },
+      { new: false }
+    );
+    await deleteImage(user.image);
+    const newUser = await User.findOne(
+      {
+        _id: id,
+      }
+    );
+    if (newUser) {
+      res.status(201).json({
+        status: true,
+        message: "Profile image changed successfully",
+        data: newUser,
+      });
+    }
+  } catch (err) {
+    res.status(500).json({
+      status: false,
+      message: "Error changing profile image",
+      error: err,
+    });
+  }
+};
 
 module.exports = {
   signupUser,
   loginUser,
   authenticateUser,
-  getUser
+  getUser,
+  changeProfile,
 };
