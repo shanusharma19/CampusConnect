@@ -202,11 +202,9 @@ const changeProfile = async (req, res) => {
       { new: false }
     );
     await deleteImage(user.image);
-    const newUser = await User.findOne(
-      {
-        _id: id,
-      }
-    );
+    const newUser = await User.findOne({
+      _id: id,
+    });
     if (newUser) {
       res.status(201).json({
         status: true,
@@ -223,10 +221,164 @@ const changeProfile = async (req, res) => {
   }
 };
 
+const sendRequest = async (req, res) => {
+  try {
+    const userId = req.body.userId;
+    const id = req.params.id;
+    if (userId == id) {
+      res.status(500).json({
+        status: false,
+        message: "UserId and Id are same",
+      });
+      return;
+    }
+
+  const temp1 = await User.findOne({_id: id});
+
+  if (!temp1) {
+    res.status(422).json({
+      status: false,
+      message: "Invalid id",
+    });
+    return;
+  }
+
+    await User.findOneAndUpdate(
+      { _id: id },
+      { $addToSet: { requests: userId } },
+      { new: true }
+    );
+
+    const updatedUser = await User.findOneAndUpdate(
+      { _id: userId },
+      { $addToSet: { sentTo: id } },
+      { new: true }
+    );
+
+    if (updatedUser) {
+      res.status(201).json({
+        status: true,
+        message: "Request sent successfully",
+        data: updatedUser,
+      });
+    }
+  } catch (err) {
+    res.status(500).json({
+      status: false,
+      message: "Error in sending request",
+      error: err,
+    });
+  }
+};
+
+const rejectRequest = async (req, res) => {
+  try {
+    const userId = req.body.userId;
+    const id = req.params.id;
+    if (userId == id) {
+      res.status(500).json({
+        status: false,
+        message: "UserId and Id are same",
+      });
+      return;
+    }
+
+  const temp1 = await User.findOne({_id: id});
+
+  if (!temp1) {
+    res.status(422).json({
+      status: false,
+      message: "Invalid id",
+    });
+    return;
+  }
+
+    const updatedUser = await User.findOneAndUpdate(
+      { _id: userId },
+      { $pull: { requests: id } },
+      { new: true }
+    );
+
+    await User.findOneAndUpdate(
+      { _id: id },
+      { $pull: { sentTo: userId } },
+      { new: true }
+    );
+
+    if (updatedUser) {
+      res.status(201).json({
+        status: true,
+        message: "Request rejected successfully",
+        data: updatedUser,
+      });
+    }
+  } catch (err) {
+    res.status(500).json({
+      status: false,
+      message: "Error in rejecting request",
+      error: err,
+    });
+  }
+};
+
+const acceptRequest = async (req, res) => {
+  try {
+    const userId = req.body.userId;
+    const id = req.params.id;
+    if (userId == id) {
+      res.status(500).json({
+        status: false,
+        message: "UserId and Id are same",
+      });
+      return;
+    }
+
+  const temp1 = await User.findOne({_id: userId, requests: [id]});
+
+  if (!temp1) {
+    res.status(422).json({
+      status: false,
+      message: "Invalid id",
+    });
+    return;
+  }
+    
+  await User.findOneAndUpdate(
+    { _id: id },
+    { $pull: { sentTo: userId }, $addToSet: { partners: userId } }
+  );
+
+    const updatedUser = await User.findOneAndUpdate(
+      { _id: userId },
+      { $pull: { requests: id }, $addToSet: { partners: id } },
+      { new: true }
+    );
+
+    if (updatedUser) {
+      res.status(201).json({
+        status: true,
+        message: "Request rejected successfully",
+        data: updatedUser,
+      });
+    }
+  } catch (err) {
+    res.status(500).json({
+      status: false,
+      message: "Error in rejecting request",
+      error: err,
+    });
+  }
+};
+
+
+
 module.exports = {
   signupUser,
   loginUser,
   authenticateUser,
   getUser,
   changeProfile,
+  sendRequest,
+  rejectRequest,
+  acceptRequest
 };

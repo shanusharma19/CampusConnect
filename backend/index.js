@@ -9,7 +9,10 @@ const {
   loginUser,
   authenticateUser,
   getUser,
-  changeProfile
+  changeProfile,
+  sendRequest,
+  rejectRequest,
+  acceptRequest
 } = require("./User/UserControllers");
 
 const {
@@ -42,6 +45,9 @@ cloudinary.config({
 app.post("/signup", signupUser);
 app.post("/login", loginUser);
 app.patch("/changeProfile", changeProfile);
+app.patch("/sendRequest/:id", sendRequest);
+app.patch("/rejectRequest/:id", rejectRequest);
+app.patch("/acceptRequest/:id", acceptRequest);
 app.get("/user", authenticateUser, getUser);
 
 app.get("/getItems", getItems);

@@ -24,6 +24,14 @@ const schema = new mongoose.Schema(
         require: true,
       },
     },
+    github: {
+      type: String,
+      require: false,
+    },
+    linkdin: {
+      type: String,
+      require: false,
+    },
     requests:[
       {
         type: mongoose.Types.ObjectId,
@@ -37,7 +45,20 @@ const schema = new mongoose.Schema(
         required: false,
         ref: "User",
       }
-    ]
+    ],
+    sentTo:[
+      {
+        type: mongoose.Types.ObjectId,
+        required: false,
+        ref: "User",
+      }
+    ],
+    skills:[
+      {
+        type: String,
+        required: false,
+      }
+    ] 
   },
 );
 
